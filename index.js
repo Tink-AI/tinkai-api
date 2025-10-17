@@ -5,17 +5,30 @@ import "dotenv/config";
 
 const app = express();
 
-// TEMP: allow your site while testing. Tighten later if needed.
+// Allow your site
 app.use(cors({ origin: ["https://ai.tinkfactory.com"], methods: ["GET","POST"] }));
 app.use(bodyParser.json({ limit: "1mb" }));
 
-// Root ping (helps verify service is alive)
-app.get("/", (req, res) => res.send("TinkAI API is running 🚀"));
+// KEEP your existing /healthz for Render
+app.get("/healthz", (req, res) => res.json({ ok: true, path: "/healthz" }));
 
-// Health route (the one you’re testing)
-app.get("/api/health", (req, res) => res.json({ ok: true }));
+// OPTIONAL alias so your own tests work too
+app.get("/api/health", (req, res) => res.json({ ok: true, path: "/api/health" }));
 
-// Minimal chat route (works without OpenAI while testing)
+// Used by your chat page header/theme
+app.get("/api/bootstrap", (req, res) => {
+  res.json({
+    name: "TinkFactory",
+    welcome: "Hi 👋 I’m TinkBot. Ask me about PVC boards, plates, banners, or delivery.",
+    theme: {
+      primary: "#0ea5e9",
+      // note: path matches your Bluehost folder name "AI"
+      logoUrl: "https://ai.tinkfactory.com/AI/tenant-assets/tinkfactory-logo.png",
+    },
+  });
+});
+
+// Minimal chat (works even without OpenAI to test)
 app.post("/api/chat", (req, res) => {
   const userMsg = req.body?.message || "";
   res.json({ reply: `Echo: ${userMsg}` });
