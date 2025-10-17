@@ -1,16 +1,14 @@
 {
-  "name": "tinkai-api",
+  "name": "tinkai-ap",
   "version": "1.0.0",
   "main": "index.js",
   "type": "module",
-  "scripts": {
-    "start": "node index.js"
-  },
+  "scripts": { "start": "node index.js" },
+  "engines": { "node": ">=20" },
   "dependencies": {
     "body-parser": "^1.20.2",
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",
-    "express": "^4.19.2",
-    "openai": "^4.55.0"
+    "express": "^4.19.2"
   }
 }
