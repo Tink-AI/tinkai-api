@@ -187,12 +187,18 @@ app.post("/api/chat", async (req, res) => {
     const reply = completion.choices?.[0]?.message?.content || "Sorry, I had trouble answering.";
     res.json({ reply, suggestions: getSuggestions(userMsg) });
   } catch (e) {
-    console.error(e);
-    res.status(500).json({
-      reply: "Sorry, there was an error with the AI.",
-      suggestions: ["Try again", "Talk to a human 👤"],
-    });
-  }
+  // 🔎 TEMP: detailed logging to Render logs (redact key if present)
+  const msg = e?.message || "unknown-error";
+  const status = e?.status || e?.response?.status || "no-status";
+  const data = e?.response?.data || e?.error || null;
+  console.error("OpenAI error:", { status, msg, data });
+
+  // Friendlier fallback: keep the chat usable
+  return res.json({
+    reply: "I couldn't reach the AI engine just now. Want me to try again, or take your details for a manual quote?",
+    suggestions: ["Try again", "Get a manual quote", "Talk to a human 👤"],
+  });
+}
 });
 
 // -------------------------- Start --------------------------------
