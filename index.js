@@ -5,30 +5,31 @@ import "dotenv/config";
 
 const app = express();
 
-// Allow your site to call the API
+// Allow your site
 app.use(cors({ origin: ["https://ai.tinkfactory.com"], methods: ["GET","POST"] }));
 app.use(bodyParser.json({ limit: "1mb" }));
 
-// Render's default health check (keep it)
-app.get("/healthz", (req, res) => res.json({ ok: true, path: "/healthz" }));
+// Optional root route (fixes "Cannot GET /")
+app.get("/", (req, res) => res.send("TinkAI API is running 🚀"));
 
-// Optional alias for your own tests
+// Health checks (optional but useful)
+app.get("/healthz", (req, res) => res.json({ ok: true, path: "/healthz" }));
 app.get("/api/health", (req, res) => res.json({ ok: true, path: "/api/health" }));
 
-// 👇 This is what your chat page calls on load
+// 👇 Your chat UI calls this on load for name/logo/theme
 app.get("/api/bootstrap", (req, res) => {
   res.json({
     name: "TinkFactory",
     welcome: "Hi 👋 I’m TinkBot. Ask me about PVC boards, plates, banners, or delivery.",
     theme: {
       primary: "#0ea5e9",
-      // IMPORTANT: matches your Bluehost folder name "AI"
+      // note: your Bluehost folder is "AI"
       logoUrl: "https://ai.tinkfactory.com/AI/tenant-assets/tinkfactory-logo.png",
     },
   });
 });
 
-// Minimal chat echo (works even without OpenAI so we can test)
+// Minimal chat reply (works even without OpenAI)
 app.post("/api/chat", (req, res) => {
   const userMsg = req.body?.message || "";
   res.json({ reply: `Echo: ${userMsg}` });
